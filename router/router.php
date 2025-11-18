@@ -64,41 +64,13 @@ switch ($function) {
         break;
 
     // user data functions
-    case 'fetchalluserdata':
-        getAllUserData($data, $connection);
-        break;
-    case 'fetchuserdata':
-        getUserData($data, $connection);
-        break;
-    case 'getappointmentsdatapatient':
-        getAppointmentsDataPatient($data['userid'] ?? '', $connection);
-        break;
-    case 'updateuserdata':
-        UpdateUserData($data, $connection);
-        break;
-    case 'updateuserrole':
-        updateUserRole($data, $connection);
-        break;
+   
 
     // get functions
     case 'getalldentists':
         getAllDentists($connection);
         break;
-    case 'getallpatients':
-        getAllPatients($connection);
-        break;
-    case 'getallusers':
-        getAllUsers($connection);
-        break;
-    case 'getalltreatments':
-        getAllTreatments($connection);
-        break;
-    case 'getappointmentsforweek':
-        getAppointmentsForWeek($data['userid'] ?? null, $data['week'] ?? null, $data['year'] ?? null, $connection);
-        break;
-    case 'getcurrentdentist':
-        getCurrentDentistName($data['userid'] ?? '', $connection);
-        break;
+  
 
     // appointment functions
     case 'checkappointments':
@@ -109,22 +81,7 @@ switch ($function) {
             "data" => $stats
         ]);
         break;
-    case 'createappointment':
-        createAppointment($data, $connection);
-        break;
-    case 'getappointmentdata':
-        getAppointmentData($data, $connection);
-        break;
-    // treatment functions
-    case 'addtreatment':
-        addTreatment($data, $connection);
-        break;
-    case 'deletetreatment':
-        removeTreatment($data, $connection);
-        break;
-    case 'updatetreatment':
-        editTreatment($data, $connection);
-        break;
+  
 
     default:
         echo json_encode(["success" => false, "message" => "Functie niet gevonden"]);
