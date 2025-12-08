@@ -68,7 +68,7 @@ function addUser($data, $conn)
     // Hases the passowrd
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-    $sql = "INSERT INTO users (firstname, lastname, email, ) VALUES ('$firstName', '$lastName', '$email')";
+    $sql = "INSERT INTO user (firstname, lastname, email, phonenumber) VALUES ('$firstName', '$lastName', '$email', '$phonenumber')";
     mysqli_query($conn, $sql);
 
     // Get the user id after adding
