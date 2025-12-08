@@ -1,7 +1,6 @@
 <?php
 
-include_once('../functions/isEmailRegistered.php'); 
-
+include_once('../functions/isEmailRegistered.php');
 
 function isPasswordStrong($password, &$message)
 {
@@ -26,62 +25,90 @@ function isPasswordStrong($password, &$message)
 
 function addUser($data, $conn)
 {
-    $firstName = $data['firstName'] ?? null;
-    $lastName = $data['lastName'] ?? null;
+    $firstName = $data['firstname'] ?? null;
+    $lastName = $data['lastname'] ?? null;
     $email = $data['email'] ?? null;
     $password = $data['password'] ?? null;
+    $phonenumber = $data['phonenumber'] ?? null;
+    $adress = $data['address'] ?? null;
+    $streetname = $data['streetname'] ?? null;
+    $housenumber = $data['housenumber'] ?? null;
+    $postalcode = $data['postalcode'] ?? null;
+    $city = $data['city'] ?? null;
+    $country = $data['country'] ?? null;
 
-    // First check if email is already in use if so succes = false and return a error message
-    if (isEmailRegistered($email, $conn)) {
-        echo json_encode([
-            "success" => false,
-            "message" => "Dit email adress is al geregistreerd, probeer een andere email adress"
-        ]);
-        return;
-    }
+    // First check if email is already in use
+    // if (isEmailRegistered($email, $conn)) {
+    //     echo json_encode([
+    //         "success" => false,
+    //         "message" => "Dit email adres is al geregistreerd, probeer een andere email adres"
+    //     ]);
+    //     return;
+    // }
 
-    if (!isPasswordStrong($password, $message)) {
-        echo json_encode([
-            "success" => false,
-            "message" => $message
-        ]);
-        return;
-    }
+    // Password strength check (uncomment if needed)
+    // if (!isPasswordStrong($password, $message)) {
+    //     echo json_encode([
+    //         "success" => false,
+    //         "message" => $message
+    //     ]);
+    //     return;
+    // }
 
-    // If any of the fields are empty return an error message
+    // Check required fields
     if (empty($firstName) || empty($lastName) || empty($email) || empty($password)) {
         echo json_encode([
             "success" => false,
-            "message" => "Alle velden zijn verplicht"
+            "message" => "Alle verplichte velden moeten ingevuld zijn"
         ]);
         return;
     }
 
-    // Hases the passowrd
+    // Hash the password
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-    $sql = "INSERT INTO users (firstname, lastname, email) VALUES ('$firstName', '$lastName', '$email')";
-    mysqli_query($conn, $sql);
+    $sql = "INSERT INTO user (firstname, lastname, email, phonenumber, created_at) VALUES ('$firstName', '$lastName', '$email', '$phonenumber', NOW())";
+    $result = mysqli_query($conn, $sql);
 
-    // Get the user id after adding
-    $newId = mysqli_insert_id($conn);
+    if (!$result) {
+        echo json_encode([
+            "success" => false,
+            "message" => "Fout bij aanmaken gebruiker: " . mysqli_error($conn)
+        ]);
+        return;
+    }
 
-    // Create a format for the user id with the new ID
-    $userId = 'U-' . str_pad($newId, 5, '0', STR_PAD_LEFT);
+    // Get the auto-generated userid (this will be an integer like 11, 12, 13...)
+    $userId = mysqli_insert_id($conn);
 
-    $passwordSql = "INSERT INTO userpasswords (userid, password) VALUES ('$userId', '$hashedPassword')";
-    mysqli_query($conn, $passwordSql);
+    $displayUserId = 'U-' . str_pad($userId, 5, '0', STR_PAD_LEFT);
 
-    $updateSql = "UPDATE users SET userid='$userId' WHERE id=$newId";
-    mysqli_query($conn, $updateSql);
+    $updateUserIDSQL = "UPDATE user SET userid='$displayUserId' WHERE id=$userId";
+    mysqli_query($conn, $updateUserIDSQL);
+    // Insert password using the integer userid
+    $passwordSql = "INSERT INTO userpassword (userid, password) VALUES ('$displayUserId', '$hashedPassword')";
+    $passwordResult = mysqli_query($conn, $passwordSql);
 
-    $addUserAdressSql = "INSERT INTO useradresses (userid) VALUES ('$userId')";
-    mysqli_query($conn, $addUserAdressSql);
+    if (!$passwordResult) {
+        echo json_encode([
+            "success" => false,
+            "message" => "Fout bij opslaan wachtwoord: " . mysqli_error($conn)
+        ]);
+        return;
+    }
+
+    // Insert address if provided
+    if (!empty($streetname) || !empty($city)) {
+        $housenumberValue = !empty($housenumber) ? $housenumber : 0;
+      $addUserAddressSql = "INSERT INTO useradress (userid, adress, streetname, city, country, housenumber) VALUES ('$displayUserId', '$adress', '$streetname', '$city', '$country', $housenumberValue)";
+        mysqli_query($conn, $addUserAddressSql);
+    }
 
     echo json_encode([
-        "success" => mysqli_affected_rows($conn) > 0,
-        "message" => mysqli_affected_rows($conn) > 0 ? "Account is succesvol aangemaakt" : "Registratie mislukt",
-        "userId" => $userId
+        "success" => true,
+        "message" => "Account is succesvol aangemaakt",
+        "userId" => $userId,
+        "displayUserId" => $displayUserId
     ]);
 }
 
@@ -90,21 +117,42 @@ function checkLogin($data, $conn)
     $email = $data['email'] ?? null;
     $password = $data['password'] ?? null;
 
-    $sql = "SELECT *, p.password FROM users u JOIN userpasswords p ON u.userid = p.userid WHERE u.email='$email'";
+    if (empty($email) || empty($password)) {
+        echo json_encode([
+            "success" => false,
+            "message" => "Email en wachtwoord zijn verplicht"
+        ]);
+        return;
+    }
+
+    // Fixed table name: userpassword (not userpasswords)
+    $sql = "SELECT u.*, p.password FROM user u JOIN userpassword p ON u.userid = p.userid WHERE u.email='$email'";
     $result = mysqli_query($conn, $sql);
+
+    if (!$result) {
+        echo json_encode([
+            "success" => false,
+            "message" => "Database fout: " . mysqli_error($conn)
+        ]);
+        return;
+    }
+
     $user = mysqli_fetch_assoc($result);
 
     if ($user && password_verify($password, $user['password'])) {
+        $displayUserId = 'U-' . str_pad($user['userid'], 5, '0', STR_PAD_LEFT);
+
         echo json_encode([
             "success" => true,
             "message" => "Login successful",
             "data" => [
-                "id" => $user['id'],
+                "userid" => $user['userid'],
+                "displayUserId" => $displayUserId,
                 "firstName" => $user['firstname'],
                 "lastName" => $user['lastname'],
                 "email" => $user['email'],
                 "role" => $user['role'],
-                "userid" => $user['userid']
+                "phonenumber" => $user['phonenumber']
             ],
         ]);
     } else {
