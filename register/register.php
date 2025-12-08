@@ -26,10 +26,18 @@ function isPasswordStrong($password, &$message)
 
 function addUser($data, $conn)
 {
-    $firstName = $data['firstName'] ?? null;
-    $lastName = $data['lastName'] ?? null;
+    $firstName = $data['firstname'] ?? null;
+    $lastName = $data['lastname'] ?? null;
     $email = $data['email'] ?? null;
     $password = $data['password'] ?? null;
+    $phonenumber = $data['phonenumber'] ?? null;
+    $adress = $data['address'] ?? null;
+    $streetname = $data['streetname'] ?? null;
+    $housenumber = $data['housenumber'] ?? null;
+    $postalcode = $data['postalcode'] ?? null;
+    $city = $data['city'] ?? null;
+
+
 
     // First check if email is already in use if so succes = false and return a error message
     if (isEmailRegistered($email, $conn)) {
@@ -60,7 +68,7 @@ function addUser($data, $conn)
     // Hases the passowrd
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-    $sql = "INSERT INTO users (firstname, lastname, email) VALUES ('$firstName', '$lastName', '$email')";
+    $sql = "INSERT INTO users (firstname, lastname, email, ) VALUES ('$firstName', '$lastName', '$email')";
     mysqli_query($conn, $sql);
 
     // Get the user id after adding
