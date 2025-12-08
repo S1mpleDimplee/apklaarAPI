@@ -5,20 +5,20 @@ function getAppointmentData($data, $conn)
   header('Content-Type: application/json');
 
   // Validate input
-  if (!isset($data['appointmentId']) || empty($data['appointmentId'])) {
+  if (!isset($data['aid']) || empty($data['aid'])) {
     echo json_encode([
       "success" => false,
-      "message" => "Ongeldige invoer (appointmentId ontbreekt)",
+      "message" => "Ongeldige invoer (aid ontbreekt)",
       "data" => []
     ]);
     return;
   }
 
   // Sanitize input
-  $appointmentId = mysqli_real_escape_string($conn, $data['appointmentId']);
+  $aid = mysqli_real_escape_string($conn, $data['aid']);
 
   // Query the database
-  $sql = "SELECT * FROM appointments WHERE id = '$appointmentId'";
+  $sql = "SELECT * FROM appointment WHERE id = '$aid'";
   $result = mysqli_query($conn, $sql);
 
   if (!$result) {
@@ -30,13 +30,13 @@ function getAppointmentData($data, $conn)
     return;
   }
 
-  $appointments = mysqli_fetch_all($result, MYSQLI_ASSOC);
+  $appointment = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
   // Check if appointment was found
-  if (empty($appointments)) {
+  if (empty($appointment)) {
     echo json_encode([
       "success" => false,
-      "message" => "Er is geen afspraak gevonden met ID: $appointmentId",
+      "message" => "Er is geen afspraak gevonden met ID: $aid",
       "data" => []
     ]);
     return;
@@ -46,6 +46,6 @@ function getAppointmentData($data, $conn)
   echo json_encode([
     "success" => true,
     "message" => "Afspraakgegevens succesvol opgehaald",
-    "data" => $appointments
+    "data" => $appointment
   ]);
 }
