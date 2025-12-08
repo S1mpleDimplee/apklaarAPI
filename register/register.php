@@ -38,13 +38,13 @@ function addUser($data, $conn)
     $country = $data['country'] ?? null;
 
     // First check if email is already in use
-    if (isEmailRegistered($email, $conn)) {
-        echo json_encode([
-            "success" => false,
-            "message" => "Dit email adres is al geregistreerd, probeer een andere email adres"
-        ]);
-        return;
-    }
+    // if (isEmailRegistered($email, $conn)) {
+    //     echo json_encode([
+    //         "success" => false,
+    //         "message" => "Dit email adres is al geregistreerd, probeer een andere email adres"
+    //     ]);
+    //     return;
+    // }
 
     // Password strength check (uncomment if needed)
     // if (!isPasswordStrong($password, $message)) {
@@ -64,7 +64,7 @@ function addUser($data, $conn)
         return;
     }
 
-    // Hases the passowrd
+    // Hash the password
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
     $sql = "INSERT INTO user (firstname, lastname, email, phonenumber, created_at) VALUES ('$firstName', '$lastName', '$email', '$phonenumber', NOW())";
@@ -81,8 +81,12 @@ function addUser($data, $conn)
     // Get the auto-generated userid (this will be an integer like 11, 12, 13...)
     $userId = mysqli_insert_id($conn);
 
+    $displayUserId = 'U-' . str_pad($userId, 5, '0', STR_PAD_LEFT);
+
+    $updateUserIDSQL = "UPDATE user SET userid='$displayUserId' WHERE id=$userId";
+    mysqli_query($conn, $updateUserIDSQL);
     // Insert password using the integer userid
-    $passwordSql = "INSERT INTO userpassword (userid, password) VALUES ($userId, '$hashedPassword')";
+    $passwordSql = "INSERT INTO userpassword (userid, password) VALUES ('$displayUserId', '$hashedPassword')";
     $passwordResult = mysqli_query($conn, $passwordSql);
 
     if (!$passwordResult) {
@@ -93,13 +97,12 @@ function addUser($data, $conn)
         return;
     }
 
+    // Insert address if provided
     if (!empty($streetname) || !empty($city)) {
         $housenumberValue = !empty($housenumber) ? $housenumber : 0;
-        $addUserAddressSql = "INSERT INTO useradress (userid, adress, streetname, city, country, housenumber) VALUES ($userId, '$adress', '$streetname', '$city', '$country', $housenumberValue)";
+      $addUserAddressSql = "INSERT INTO useradress (userid, adress, streetname, city, country, housenumber) VALUES ('$displayUserId', '$adress', '$streetname', '$city', '$country', $housenumberValue)";
         mysqli_query($conn, $addUserAddressSql);
     }
-
-    $displayUserId = 'U-' . str_pad($userId, 5, '0', STR_PAD_LEFT);
 
     echo json_encode([
         "success" => true,
@@ -122,6 +125,7 @@ function checkLogin($data, $conn)
         return;
     }
 
+    // Fixed table name: userpassword (not userpasswords)
     $sql = "SELECT u.*, p.password FROM user u JOIN userpassword p ON u.userid = p.userid WHERE u.email='$email'";
     $result = mysqli_query($conn, $sql);
 
