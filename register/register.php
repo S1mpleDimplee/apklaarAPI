@@ -38,13 +38,13 @@ function addUser($data, $conn)
     $country = $data['country'] ?? null;
 
     // First check if email is already in use
-    // if (isEmailRegistered($email, $conn)) {
-    //     echo json_encode([
-    //         "success" => false,
-    //         "message" => "Dit email adres is al geregistreerd, probeer een andere email adres"
-    //     ]);
-    //     return;
-    // }
+    if (isEmailRegistered($email, $conn)) {
+        echo json_encode([
+            "success" => false,
+            "message" => "Dit email adres is al geregistreerd, probeer een andere email adres"
+        ]);
+        return;
+    }
 
     // Password strength check (uncomment if needed)
     // if (!isPasswordStrong($password, $message)) {
@@ -100,7 +100,7 @@ function addUser($data, $conn)
     // Insert address if provided
     if (!empty($streetname) || !empty($city)) {
         $housenumberValue = !empty($housenumber) ? $housenumber : 0;
-      $addUserAddressSql = "INSERT INTO useradress (userid, adress, streetname, city, country, housenumber) VALUES ('$displayUserId', '$adress', '$streetname', '$city', '$country', $housenumberValue)";
+        $addUserAddressSql = "INSERT INTO useradress (userid, adress, streetname, city, country, housenumber) VALUES ('$displayUserId', '$adress', '$streetname', '$city', '$country', $housenumberValue)";
         mysqli_query($conn, $addUserAddressSql);
     }
 
