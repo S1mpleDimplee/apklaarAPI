@@ -157,7 +157,7 @@ function checkLogin($data, $conn)
     } else {
         echo json_encode([
             "success" => false,
-            "message" => "Email of wachtwoord is onjuist, probeer het opnieuw"
+            "message" => "Email bestaat niet of wachtwoord is onjuist, probeer het opnieuw"
         ]);
     }
 }
