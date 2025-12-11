@@ -1,8 +1,10 @@
 <?php
 header("Access-Control-Allow-Origin: http://localhost:3000");
+header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type: application/json");
+session_start();
 
 // Dynamically get the current file name
 $currentFileName = basename(__FILE__);
@@ -27,6 +29,7 @@ include '../userdata/getUserData.php';
 include '../userdata/updateUserData.php';
 include '../userdata/updatecurrentdentist.php';
 include '../userdata/updateUserRole.php';
+include '../emailtriggers/verificationcode.php';
 
 
 // Handle preflight OPTIONS request
@@ -64,13 +67,13 @@ switch ($function) {
         break;
 
     // user data functions
-   
+
 
     // get functions
     case 'getalldentists':
         getAllDentists($connection);
         break;
-  
+
 
     // appointment functions
     case 'checkappointments':
@@ -81,7 +84,13 @@ switch ($function) {
             "data" => $stats
         ]);
         break;
-  
+
+    case 'sendverificationcode':
+        SendVerificationEmail($data);
+        break;
+    case 'checkverificationcode':
+        CheckIfCodeIsValid($data, $connection);
+        break;
 
     default:
         echo json_encode(["success" => false, "message" => "Functie niet gevonden"]);
