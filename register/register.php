@@ -1,6 +1,6 @@
 <?php
 
-include_once('../functions/isEmailRegistered.php');
+include_once '../functions/isEmailRegistered.php';
 
 function isPasswordStrong($password, &$message)
 {
@@ -30,10 +30,9 @@ function addUser($data, $conn)
     $email = $data['email'] ?? null;
     $password = $data['password'] ?? null;
     $phonenumber = $data['phonenumber'] ?? null;
-    $adress = $data['address'] ?? null;
     $streetname = $data['streetname'] ?? null;
     $housenumber = $data['housenumber'] ?? null;
-    $postalcode = $data['postalcode'] ?? null;
+    $postalcode = $data['postcode'] ?? null;
     $city = $data['city'] ?? null;
     $country = $data['country'] ?? null;
 
@@ -67,7 +66,7 @@ function addUser($data, $conn)
     // Hash the password
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-    $sql = "INSERT INTO user (firstname, lastname, email, phonenumber, created_at) VALUES ('$firstName', '$lastName', '$email', '$phonenumber', NOW())";
+    $sql = "INSERT INTO user (firstname, lastname, email, phonenumber, created_at) VALUES ('$firstName', '$lastName', '$email', '$phonenumber', NOW()) ON DUPLICATE KEY UPDATE email=VALUES(email)";
     $result = mysqli_query($conn, $sql);
 
     if (!$result) {
@@ -100,15 +99,17 @@ function addUser($data, $conn)
     // Insert address if provided
     if (!empty($streetname) || !empty($city)) {
         $housenumberValue = !empty($housenumber) ? $housenumber : 0;
-        $addUserAddressSql = "INSERT INTO useradress (userid, adress, streetname, city, country, housenumber) VALUES ('$displayUserId', '$adress', '$streetname', '$city', '$country', $housenumberValue)";
+        $addUserAddressSql = "INSERT INTO useradress (userid, adress, streetname, city, country, housenumber) VALUES ('$displayUserId', '$postalcode', '$streetname', '$city', '$country', $housenumberValue)";
+
         mysqli_query($conn, $addUserAddressSql);
     }
 
     echo json_encode([
         "success" => true,
         "message" => "Account is succesvol aangemaakt",
-        "userId" => $userId,
-        "displayUserId" => $displayUserId
+        "data" => [
+            "userid" => $userId,
+        ]
     ]);
 }
 
@@ -158,7 +159,7 @@ function checkLogin($data, $conn)
     } else {
         echo json_encode([
             "success" => false,
-            "message" => "Email of wachtwoord is onjuist, probeer het opnieuw"
+            "message" => "Email bestaat niet of wachtwoord is onjuist, probeer het opnieuw"
         ]);
     }
 }
