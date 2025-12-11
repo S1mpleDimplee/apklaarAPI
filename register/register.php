@@ -106,8 +106,9 @@ function addUser($data, $conn)
     echo json_encode([
         "success" => true,
         "message" => "Account is succesvol aangemaakt",
-        "userId" => $userId,
-        "displayUserId" => $displayUserId
+        "data" => [
+            "userid" => $userId,
+        ]
     ]);
 }
 

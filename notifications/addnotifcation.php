@@ -31,17 +31,17 @@ $notifcationpresets = [
 
 function CreateNotifcation($data, $conn)
 {
-
+    global $notifcationpresets;
 
     $userid = $data['userid'] ?? null;
     $preset = $data['preset'] ?? null;
 
-    $title = $notifcationpresets[$preset]['title'] ?? null;
-    $message = $notifcationpresets[$preset]['message'] ?? null;
+    $title = $notifcationpresets[$preset]['title'] ?? "";
+    $message = $notifcationpresets[$preset]['message'] ?? "";
 
 
-    $createNotifcationSQL = "INSERT INTO notifications (userid, title, message, date) VALUES ($userid , ?, ?, ?, NOW())";
-
+    $createNotifcationSQL = "INSERT INTO notifications (userid, title, description, date) VALUES ('$userid', '$title', '$message', NOW())";
+    mysqli_query($conn, $createNotifcationSQL);
 }
 
 function FetchNotifcations($data, $conn)

@@ -89,7 +89,7 @@ switch ($function) {
         SendVerificationEmail($data);
         break;
     case 'checkverificationcode':
-        CheckIfCodeIsValid($data);
+        CheckIfCodeIsValid($data, $connection);
         break;
 
     default:

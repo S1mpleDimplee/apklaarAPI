@@ -4,6 +4,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 require 'vendor/autoload.php';
+include '../notifications/addnotifcation.php';
 
 function SendVerificationEmail($data)
 {
@@ -20,7 +21,7 @@ function SendVerificationEmail($data)
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
         $mail->Username = 'noreply.apklaar@gmail.com';
-        $mail->Password = 'yldyvncpmntvilsi'; // App wahctwoord
+        $mail->Password = 'fcivxqefmvmczgvz'; // App wahctwoord
         $mail->SMTPSecure = 'tls';
         $mail->Port = 587;
 
@@ -51,13 +52,23 @@ function SendVerificationEmail($data)
 }
 
 
-function CheckIfCodeIsValid($data)
+function CheckIfCodeIsValid($data, $conn)
 {
     $inputCode = $data['code'] ?? '';
+    $userid = $data['userid'] ?? null;
 
     if (isset($_SESSION['verification_code']) && $_SESSION['verification_code'] == $inputCode) {
         unset($_SESSION['verification_code']);
         echo json_encode(["success" => true, "message" => "Verificatie succesvol!"]);
+
+        $updateUserVerifieStatusSQL = "UPDATE user SET isverified = 1 WHERE id = '$userid'";
+        mysqli_query($conn, $updateUserVerifieStatusSQL);
+
+        CreateNotifcation([
+            "userid" => $userid,
+            "preset" => "verfication_success"
+        ], $conn);
+
     } else {
         echo json_encode(["success" => false, "message" => "Ongeldige verificatiecode. Probeer het opnieuw. de juiste c"]);
     }
