@@ -57,6 +57,11 @@ function CheckIfCodeIsValid($data, $conn)
     $inputCode = $data['code'] ?? '';
     $userid = $data['userid'] ?? null;
 
+    if (!$userid) {
+        echo json_encode(["success" => false, "message" => "Ongeldige gebruiker."]);
+        return;
+    }
+
     if (isset($_SESSION['verification_code']) && $_SESSION['verification_code'] == $inputCode) {
         unset($_SESSION['verification_code']);
         echo json_encode(["success" => true, "message" => "Verificatie succesvol!"]);
@@ -70,7 +75,7 @@ function CheckIfCodeIsValid($data, $conn)
         ], $conn);
 
     } else {
-        echo json_encode(["success" => false, "message" => "Ongeldige verificatiecode. Probeer het opnieuw. de juiste c"]);
+        echo json_encode(["success" => false, "message" => "Ongeldige verificatiecode, Probeer het opnieuw."]);
     }
 }
 
