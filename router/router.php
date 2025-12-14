@@ -30,6 +30,9 @@ include '../userdata/updateUserData.php';
 include '../userdata/updatecurrentdentist.php';
 include '../userdata/updateUserRole.php';
 include '../emailtriggers/verificationcode.php';
+include '../addcar/addcar.php';
+include '../getcars/getcars.php';
+include '../notifications/getNotifications.php';
 
 
 // Handle preflight OPTIONS request
@@ -65,8 +68,13 @@ switch ($function) {
     case 'loginuser':
         checkLogin($data, $connection);
         break;
+    case 'getnotifications':
+        getNotifications($data, $connection);
+        break;
+    case 'getcars':
+        getcars($data, $connection);
+        break;
 
-    // user data functions
 
 
     // get functions
@@ -91,7 +99,9 @@ switch ($function) {
     case 'checkverificationcode':
         CheckIfCodeIsValid($data, $connection);
         break;
-
+    case 'addcar':
+        addCar($data, $connection);
+        break;
     default:
         echo json_encode(["success" => false, "message" => "Functie niet gevonden"]);
         break;
