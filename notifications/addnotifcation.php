@@ -1,4 +1,5 @@
 <?php
+$carname = null;
 
 $notifcationpresets = [
     "welcome" => [
@@ -21,20 +22,21 @@ $notifcationpresets = [
         "message" => "Je abonnement verloopt over 3 dagen. Vergeet niet om te verlengen om ononderbroken toegang te behouden.",
         "type" => "alert"
     ],
-    "new_feature" => [
-        "title" => "Nieuwe functie beschikbaar",
-        "message" => "We hebben een nieuwe functie toegevoegd! Log in om het uit te proberen.",
+    "caradded" => [
+        "title" => "Nieuwe auto toegevoegd",
+        "message" => "U heeft een nieuwe auto aan uw account toegevoegd: " . $carname . ". U ontvangt nu meldingen voor deze auto.",
         "type" => "info"
     ]
 ];
 
 
-function CreateNotifcation($data, $conn)
+function AddNotification($data, $conn)
 {
     global $notifcationpresets;
 
     $userid = $data['userid'] ?? null;
     $preset = $data['preset'] ?? null;
+    $carname = $data['carname'] ?? null;
 
     $title = $notifcationpresets[$preset]['title'] ?? "";
     $message = $notifcationpresets[$preset]['message'] ?? "";

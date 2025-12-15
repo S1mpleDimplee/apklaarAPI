@@ -69,7 +69,7 @@ function CheckIfCodeIsValid($data, $conn)
         $updateUserVerifieStatusSQL = "UPDATE user SET isverified = 1 WHERE id = '$userid'";
         mysqli_query($conn, $updateUserVerifieStatusSQL);
 
-        CreateNotifcation([
+        AddNotification([
             "userid" => $userid,
             "preset" => "verfication_success"
         ], $conn);

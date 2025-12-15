@@ -1,4 +1,6 @@
 <?php
+
+include '../notifications/addnotifcation.php';
 function addCar($data, $conn)
 {
 
@@ -40,6 +42,13 @@ function addCar($data, $conn)
                 VALUES ('$userid', '$carNickname', '$licensePlateCountry', '$licensePlate', '$brand', '$fuelType', '$lastInspection', '$buildyear', '$model', '$color', '$carimage', NOW())";
 
   if (mysqli_query($conn, $addCarSQL)) {
+
+    AddNotification([
+      "userid" => $userid,
+      "preset" => "caradded",
+      "carname" => $carNickname
+    ], $conn);
+
     echo json_encode([
       "success" => true,
       "message" => "Auto succesvol toegevoegd"
