@@ -15,8 +15,13 @@ function addCar($data, $conn)
   $fuelType = $data['fuelType'] ?? null;
   $carNickname = $data['carNickname'] ?? null;
   $lastInspection = $data['lastInspection'] ?? null;
+  $carimage = $data['carimage'] ?? null;
 
   $userid = $data['userid'] ?? null;
+
+  if ($carimage) {
+    $carimage = mysqli_real_escape_string($conn, $carimage);
+  }
 
 
   if (
@@ -31,8 +36,8 @@ function addCar($data, $conn)
     return;
   }
 
-  $addCarSQL = "INSERT INTO car (userid, carnickname, licenseplatecountry, licenseplate, brand, fueltype, lastinspection, buildyear, model, color, registered_at) 
-                VALUES ('$userid', '$carNickname', '$licensePlateCountry', '$licensePlate', '$brand', '$fuelType', '$lastInspection', '$buildyear', '$model', '$color', NOW())";
+  $addCarSQL = "INSERT INTO car (userid, carnickname, licenseplatecountry, licenseplate, brand, fueltype, lastinspection, buildyear, model, color, carimage, registered_at) 
+                VALUES ('$userid', '$carNickname', '$licensePlateCountry', '$licensePlate', '$brand', '$fuelType', '$lastInspection', '$buildyear', '$model', '$color', '$carimage', NOW())";
 
   if (mysqli_query($conn, $addCarSQL)) {
     echo json_encode([
