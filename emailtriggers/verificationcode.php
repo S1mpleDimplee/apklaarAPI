@@ -1,10 +1,9 @@
 <?php
-
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 require 'vendor/autoload.php';
-include '../notifications/addnotifcation.php';
+
 
 function SendVerificationEmail($data)
 {
@@ -46,7 +45,7 @@ function SendVerificationEmail($data)
 
         $mail->send();
         echo json_encode(["success" => true, "message" => "Email verstuurd! Controleer uw inbox voor de verificatiecode.<br><a href='verify_code.php'>Ga naar de verificatiepagina</a>"]);
-    } catch (Exception $e) {
+    } catch (Exception) {
         echo json_encode(["success" => false, "message" => "Email versturen is fout gegaan.", "error" => $mail->ErrorInfo]);
     }
 }

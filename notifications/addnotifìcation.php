@@ -1,6 +1,4 @@
 <?php
-$carname = null;
-
 $notifcationpresets = [
     "welcome" => [
         "title" => "Welkom bij onze dienst!",
@@ -24,11 +22,10 @@ $notifcationpresets = [
     ],
     "caradded" => [
         "title" => "Nieuwe auto toegevoegd",
-        "message" => "U heeft een nieuwe auto aan uw account toegevoegd: " . $carname . ". U ontvangt nu meldingen voor deze auto.",
+        "message" => "U heeft een nieuwe auto genaamd \" {carname} \" aan uw account toegevoegd. U ontvangt nu meldingen voor deze auto.",
         "type" => "info"
     ]
 ];
-
 
 function AddNotification($data, $conn)
 {
@@ -36,11 +33,15 @@ function AddNotification($data, $conn)
 
     $userid = $data['userid'] ?? null;
     $preset = $data['preset'] ?? null;
-    $carname = $data['carname'] ?? null;
+    $carname = $data['carname'] ?? "";
 
     $title = $notifcationpresets[$preset]['title'] ?? "";
     $message = $notifcationpresets[$preset]['message'] ?? "";
 
+
+    if ($preset === "caradded") {
+        $message = str_replace("{carname}", $carname, $message);
+    }
 
     $createNotifcationSQL = "INSERT INTO notifications (userid, title, description, date) VALUES ('$userid', '$title', '$message', NOW())";
     mysqli_query($conn, $createNotifcationSQL);
