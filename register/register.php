@@ -108,7 +108,7 @@ function addUser($data, $conn)
         "success" => true,
         "message" => "Account is succesvol aangemaakt",
         "data" => [
-            "userid" => $userId,
+            "userid" => $displayUserId,
         ]
     ]);
 }
