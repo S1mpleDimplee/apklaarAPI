@@ -1,4 +1,7 @@
 <?php
+
+require "../emailtriggers/newnotification.php";
+
 $notifcationpresets = [
     "welcome" => [
         "title" => "Welkom bij onze dienst!",
@@ -24,6 +27,11 @@ $notifcationpresets = [
         "title" => "Nieuwe auto toegevoegd",
         "message" => "U heeft een nieuwe auto genaamd \" {carname} \" aan uw account toegevoegd. U ontvangt nu meldingen voor deze auto.",
         "type" => "info"
+    ],
+    "cardeleted" => [
+        "title" => "Auto verwijderd",
+        "message" => "De auto {carname} is van uw account verwijderd. Als dit een vergissing is, neem dan contact op met de klantenservice.",
+        "type" => "warning"
     ]
 ];
 
@@ -42,6 +50,12 @@ function AddNotification($data, $conn)
     if ($preset === "caradded") {
         $message = str_replace("{carname}", $carname, $message);
     }
+
+    sendNewNotification([
+        "userid" => $userid,
+        "title" => $title,
+        "message" => $message
+    ], $conn);
 
     $createNotifcationSQL = "INSERT INTO notifications (userid, title, description, date) VALUES ('$userid', '$title', '$message', NOW())";
     mysqli_query($conn, $createNotifcationSQL);

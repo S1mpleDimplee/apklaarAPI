@@ -33,6 +33,7 @@ include '../emailtriggers/verificationcode.php';
 include '../addcar/addcar.php';
 include '../getcars/getcars.php';
 include '../notifications/getNotifications.php';
+include '../removecar/removecar.php';
 
 
 // Handle preflight OPTIONS request
@@ -96,11 +97,17 @@ switch ($function) {
     case 'sendverificationcode':
         SendVerificationEmail($data);
         break;
+    case 'newnotification':
+        SendVerificationEmail($data);
+        break;
     case 'checkverificationcode':
         CheckIfCodeIsValid($data, $connection);
         break;
     case 'addcar':
         addCar($data, $connection);
+        break;
+    case 'removecar':
+        removeCar($data, $connection);
         break;
     default:
         echo json_encode(["success" => false, "message" => "Functie niet gevonden"]);
