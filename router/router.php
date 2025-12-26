@@ -34,6 +34,7 @@ include '../addcar/addcar.php';
 include '../getcars/getcars.php';
 include '../notifications/getNotifications.php';
 include '../removecar/removecar.php';
+include '../editcar/editcar.php';
 
 
 // Handle preflight OPTIONS request
@@ -108,6 +109,9 @@ switch ($function) {
         break;
     case 'removecar':
         removeCar($data, $connection);
+        break;
+    case 'editcar':
+        editCar($data, $connection);
         break;
     default:
         echo json_encode(["success" => false, "message" => "Functie niet gevonden"]);
