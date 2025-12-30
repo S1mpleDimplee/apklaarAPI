@@ -37,6 +37,7 @@ include '../removecar/removecar.php';
 include '../editcar/editcar.php';
 include '../dashboardinfo/customerdashboard.php';
 include '../fetchinvoices/fetchinvoices.php';
+include '../generateinvoice/generateinvoice.php';
 
 
 // Handle preflight OPTIONS request
@@ -120,6 +121,9 @@ switch ($function) {
         break;
     case 'fetchinvoices':
         fetchinvoices($data, $connection);
+        break;
+    case 'generateinvoice':
+        generateinvoice($data, $connection);
         break;
     default:
         echo json_encode(["success" => false, "message" => "Functie niet gevonden"]);
