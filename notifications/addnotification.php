@@ -18,11 +18,6 @@ $notifcationpresets = [
         "message" => "Je account is succesvol geverifieerd. Je kunt nu inloggen en onze diensten gebruiken.",
         "type" => "success"
     ],
-    "subscription_ending" => [
-        "title" => "Abonnement bijna verlopen",
-        "message" => "Je abonnement verloopt over 3 dagen. Vergeet niet om te verlengen om ononderbroken toegang te behouden.",
-        "type" => "alert"
-    ],
     "caradded" => [
         "title" => "Nieuwe auto toegevoegd",
         "message" => "U heeft een nieuwe auto genaamd \" {carname} \" aan uw account toegevoegd. U ontvangt nu meldingen voor deze auto.",
@@ -32,7 +27,12 @@ $notifcationpresets = [
         "title" => "Auto verwijderd",
         "message" => "De auto {carname} is van uw account verwijderd. Als dit een vergissing is, neem dan contact op met de klantenservice.",
         "type" => "warning"
-    ]
+    ],
+    "caredited" => [
+        "title" => "Auto aangepast",
+        "message" => "De gegevens van uw auto {carname} zijn succesvol aangepast.",
+        "type" => "success"
+    ],
 ];
 
 function AddNotification($data, $conn)
@@ -46,17 +46,14 @@ function AddNotification($data, $conn)
     $title = $notifcationpresets[$preset]['title'] ?? "";
     $message = $notifcationpresets[$preset]['message'] ?? "";
 
-
-    if ($preset === "caradded") {
-        $message = str_replace("{carname}", $carname, $message);
+    if ($title == "" && $message == "") {
+        return;
     }
-
     sendNewNotification([
         "userid" => $userid,
         "title" => $title,
         "message" => $message
     ], $conn);
-
     $createNotifcationSQL = "INSERT INTO notifications (userid, title, description, date) VALUES ('$userid', '$title', '$message', NOW())";
     mysqli_query($conn, $createNotifcationSQL);
 }
