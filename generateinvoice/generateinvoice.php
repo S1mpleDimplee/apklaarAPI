@@ -7,7 +7,8 @@ use Mpdf\Mpdf;
 function generateinvoice($data, $connection)
 {
     $invoiceid = $data['invoiceid'] ?? null;
-    $action = $data['action'] ?? 'download'; // 'download', 'view', 'email'
+    $userid = $data['userid'] ?? null;
+
 
     if (!$invoiceid) {
         echo json_encode(["success" => false, "message" => "Invoice ID ontbreekt"]);
@@ -69,9 +70,9 @@ function generateinvoice($data, $connection)
 
     try {
         // Clear any previous output
-        if (ob_get_level()) {
-            ob_end_clean();
-        }
+        // if (ob_get_level()) {
+        //     ob_end_clean();
+        // }
 
         // Initialiseer mPDF v6 (oude syntax)
         $mpdf = new Mpdf(['mode' => 'utf-8', 'format' => 'A4']);
@@ -83,27 +84,9 @@ function generateinvoice($data, $connection)
         $invoiceNum = $invoice['invoicenumber'] ?? 'INV-' . str_pad($invoiceid, 5, '0', STR_PAD_LEFT);
         $filename = "factuur_" . $invoiceNum . ".pdf";
 
-        if ($action === 'download') {
-            // Direct download naar browser
-            $mpdf->Output($filename, 'D');
-            exit;
+        $mpdf->Output($filename, 'D');
 
-        } elseif ($action === 'view') {
-            // Toon inline in browser
-            $mpdf->Output($filename, 'I');
-            exit;
 
-        } elseif ($action === 'email') {
-            // Email functionaliteit (optioneel)
-            $tempPath = sys_get_temp_dir() . '/' . $filename;
-            $mpdf->Output($tempPath, 'F');
-
-            // TODO: Voeg je email functie hier toe
-            // sendInvoiceEmail($invoice['email'], $tempPath, $invoice);
-
-            unlink($tempPath);
-            echo json_encode(["success" => true, "message" => "Email verzonden"]);
-        }
 
     } catch (Exception $e) {
         error_log("mPDF error: " . $e->getMessage());
@@ -138,9 +121,20 @@ function generateInvoiceHTML($invoice, $lines, $invoiceid)
         ';
     }
 
+    $logoPath = __DIR__ . '/apklaarlogo.png';
+
+    if (file_exists($logoPath)) {
+        $imageData = base64_encode(file_get_contents($logoPath));
+        $imageMimeType = mime_content_type($logoPath);
+        $logoSrc = "data:$imageMimeType;base64,$imageData";
+    } else {
+        $logoSrc = '';
+    }
+
     // Check of betaald
-    $isPaid = isset($invoice['status']) && strtolower($invoice['status']) === 'betaald';
-    $betaaldBanner = $isPaid ? '<div class="betaald-banner">Betaald</div>' : '';
+    $paymentStatus = isset($invoice['status']) ? $invoice['status'] : 'pending';
+    $betaaldBanner = $paymentStatus === 'betaald' ? '<div class="betaald-banner">Betaald</div>' :
+        ($paymentStatus === 'pending' ? '<div class="betaald-banner">Pending pending-banner</div>' : '<div class="betaald-banner onbetaald-banner">Onbetaald</div>');
 
     // Format datums met fallbacks
     $invoiceDate = isset($invoice['date']) ? date('d-m-Y', strtotime($invoice['date'])) : date('d-m-Y');
@@ -148,9 +142,9 @@ function generateInvoiceHTML($invoice, $lines, $invoiceid)
 
     // Customer info met fallbacks
     $customerName = $invoice['name'] ?? ($invoice['firstname'] . ' ' . $invoice['lastname']);
-    $customerAddress = $invoice['address'] ?? (($invoice['streetname'] ?? 'Straatnaam') . ' ' . ($invoice['housenumber'] ?? '1'));
-    $customerZipcode = $invoice['zipcode'] ?? '0000XX';
-    $customerCity = $invoice['city'] ?? 'Stad';
+    $customerAddress = $invoice['adress'] ?? (($invoice['streetname'] ?? '-') . ' ' . ($invoice['housenumber'] ?? '-'));
+    $customerZipcode = $invoice['postalcode'] ?? '-';
+    $customerCity = $invoice['city'] ?? '-';
 
     // Invoice number met fallback
     $invoiceNumber = $invoice['invoicenumber'] ?? 'INV-' . str_pad($invoiceid, 5, '0', STR_PAD_LEFT);
@@ -170,18 +164,45 @@ function generateInvoiceHTML($invoice, $lines, $invoiceid)
             }
             .betaald-banner {
                 position: absolute;
-                top: 30px;
-                left: -50px;
-                background: #28a745;
+                right: -35px;
+                background: #22c55e;
                 color: white;
-                padding: 10px 80px;
-                transform: rotate(-45deg);
+                padding: 8px 80px;
+                font-size: 14pt;
                 font-weight: bold;
-                font-size: 14px;
+                transform: rotate(45deg);
+                box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+                z-index: 999;
                 text-align: center;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-                z-index: 100;
             }
+
+            .pending-banner {
+                position: absolute;
+                right: -35px;
+                background: #f59e0b;
+                color: white;
+                padding: 8px 80px;
+                font-size: 14pt;
+                font-weight: bold;
+                transform: rotate(45deg);
+                box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+                z-index: 999;
+                text-align: center;
+            }
+
+            .onbetaald-banner {
+                position: absolute;
+                right: -35px;
+                background: #ef4444;
+                color: white;
+                padding: 8px 80px;
+                font-size: 14pt;
+                font-weight: bold;
+                transform: rotate(45deg);
+                box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+                z-index: 999;
+                text-align: center;
+            }  
             .header {
                 margin-bottom: 60px;
                 margin-top: 20px;
@@ -260,6 +281,7 @@ function generateInvoiceHTML($invoice, $lines, $invoiceid)
         </style>
     </head>
     <body>
+        <div style="position: relative; overflow: hidden;">
         ' . $betaaldBanner . '
         
         <div class="header">
@@ -270,8 +292,8 @@ function generateInvoiceHTML($invoice, $lines, $invoiceid)
                     ' . htmlspecialchars($customerZipcode) . ' ' . htmlspecialchars($customerCity) . '
                 </div>
                 <div class="header-right">
-                    <div class="logo">APKlaar</div>
-                    opkstraat 67<br>
+                    <img src="' . $logoSrc . '" style="max-width: 150px; height: auto;"><br><br>
+                    frituurstraat 67<br>
                     1000XX Amsterdam<br><br>
                     <strong>BTW nr:</strong> NL123456789B01<br>
                     <strong>KvK nr:</strong> 123456789<br>
@@ -319,6 +341,7 @@ function generateInvoiceHTML($invoice, $lines, $invoiceid)
             Het bedrag van <strong>€' . number_format($total, 2, ',', '.') . '</strong> gelieve voor 
             <strong>' . $dueDate . '</strong> worden betaald. Doe dit via onze betalings pagina op uw dashboard pagina, 
             of maak het bedrag over naar <strong>NL 96 ABNA 0418 9913 47</strong>
+        </div>
         </div>
     </body>
     </html>
