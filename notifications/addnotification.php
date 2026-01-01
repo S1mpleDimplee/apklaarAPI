@@ -33,6 +33,11 @@ $notifcationpresets = [
         "message" => "De gegevens van uw auto {carname} zijn succesvol aangepast.",
         "type" => "success"
     ],
+    "invoice_paid" => [
+        "title" => "Factuur betaald",
+        "message" => "Uw factuur #{invoiceid} is succesvol betaald. Bedankt voor uw betaling!",
+        "type" => "success"
+    ]
 ];
 
 function AddNotification($data, $conn)

@@ -38,6 +38,7 @@ include '../editcar/editcar.php';
 include '../dashboardinfo/customerdashboard.php';
 include '../fetchinvoices/fetchinvoices.php';
 include '../generateinvoice/generateinvoice.php';
+include '../stripe_payment/stripe_payment.php';
 
 
 // Handle preflight OPTIONS request
@@ -124,6 +125,9 @@ switch ($function) {
         break;
     case 'generateinvoice':
         generateinvoice($data, $connection);
+        break;
+    case 'stripe_payment':
+        handleStripePayment($data, $connection);
         break;
     default:
         echo json_encode(["success" => false, "message" => "Functie niet gevonden"]);
