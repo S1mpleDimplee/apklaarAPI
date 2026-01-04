@@ -11,25 +11,14 @@ $currentFileName = basename(__FILE__);
 
 // Include other backend functions
 
-include '../Treatments/addtreatment.php';
-include '../Treatments/removetreatment.php';
-include '../Treatments/edittreatment.php';
-include '../Treatments/getalltreatments.php';
+
 include '../appointments/createappointment.php';
 include '../appointments/getappointmentdata.php';
 include '../appointments/cancelappointment.php';
 include '../getinfo/getalldentists.php';
 include '../getinfo/getallpatients.php';
-include '../getinfo/getallusers.php';
 include '../getinfo/getcurrentdentist.php';
 include '../register/register.php';
-include '../tandarts/appointmentData.php';
-include '../tandarts/getAppointmentsForWeek.php';
-include '../userdata/getAllUserData.php';
-include '../userdata/getUserData.php';
-include '../userdata/updateUserData.php';
-include '../userdata/updatecurrentdentist.php';
-include '../userdata/updateUserRole.php';
 include '../emailtriggers/verificationcode.php';
 include '../addcar/addcar.php';
 include '../getcars/getcars.php';
@@ -40,8 +29,8 @@ include '../dashboardinfo/customerdashboard.php';
 include '../fetchinvoices/fetchinvoices.php';
 include '../generateinvoice/generateinvoice.php';
 include '../stripe_payment/stripe_payment.php';
-include '../fetchreparations/fetchreparations.php';
-include '../fetchmechanics/fetchmechanics.php';
+include '../getinfo/getallusers.php';
+
 
 
 // Handle preflight OPTIONS request
@@ -83,16 +72,16 @@ switch ($function) {
     case 'getcars':
         getcars($data, $connection);
         break;
-
-
-
-    // get functions
+    case 'fetchinvoices':
+    fetchinvoices($data, $connection);
+    break;
+    case 'getallusers':
+    getAllUsers($connection);
+    break;
     case 'getalldentists':
         getAllDentists($connection);
         break;
 
-
-    // appointment functions
     case 'checkappointments':
         $stats = checkAppointments($connection);
         echo json_encode([
@@ -131,12 +120,6 @@ switch ($function) {
         break;
     case 'stripe_payment':
         handleStripePayment($data, $connection);
-        break;
-    case 'fetchreparations':
-        fetchReparations($data, $connection);
-        break;
-    case 'fetchmechanics':
-        fetchMechanics($connection);
         break;
     case 'createappointment':
         CreateAppointment($data, $connection);
