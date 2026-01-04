@@ -40,6 +40,8 @@ include '../dashboardinfo/customerdashboard.php';
 include '../fetchinvoices/fetchinvoices.php';
 include '../generateinvoice/generateinvoice.php';
 include '../stripe_payment/stripe_payment.php';
+include '../getinfo/getallusers.php';
+
 
 
 
@@ -88,6 +90,10 @@ switch ($function) {
     case 'fetchinvoices':
     fetchinvoices($data, $connection);
     break;
+    case 'getallusers':
+    getAllUsers($connection);
+    break;
+
 
 
 
