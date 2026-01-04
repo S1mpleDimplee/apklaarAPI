@@ -17,6 +17,7 @@ include '../Treatments/edittreatment.php';
 include '../Treatments/getalltreatments.php';
 include '../appointments/createappointment.php';
 include '../appointments/getappointmentdata.php';
+include '../appointments/cancelappointment.php';
 include '../getinfo/getalldentists.php';
 include '../getinfo/getallpatients.php';
 include '../getinfo/getallusers.php';
@@ -139,6 +140,9 @@ switch ($function) {
         break;
     case 'createappointment':
         CreateAppointment($data, $connection);
+        break;
+    case 'cancelappointment':
+        Cancelappointment($data, $connection);
         break;
     default:
         echo json_encode(["success" => false, "message" => "Functie niet gevonden"]);

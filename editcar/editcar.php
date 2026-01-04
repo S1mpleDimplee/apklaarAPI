@@ -25,6 +25,17 @@ function editCar($data, $conn)
 
 
 
+    if (
+        empty($brand) || empty($model) || empty($buildyear)
+        || empty($licensePlateCountry)
+        || empty($licensePlate)
+    ) {
+        echo json_encode([
+            "success" => false,
+            "message" => "Vul alle verplichte velden in: merk, model, bouwjaar, kentekenland, kenteken"
+        ]);
+        return;
+    }
 
     $editCarSql = "UPDATE car SET 
                 carnickname = '$carNickname',
