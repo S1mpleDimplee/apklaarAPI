@@ -2,30 +2,30 @@
 
 function getAllAppointments($conn)
 {
-  header('Content-Type: application/json');
+    header('Content-Type: application/json');
 
-  $sql = "
-    SELECT 
-      a.aid,
-      a.date,
-      a.time,
-      a.duration,
-      a.status,
-      a.apk,
-      a.note,
-      u.firstname,
-      u.lastname,
-      m.name AS mechanic
-    FROM appointments a
-    LEFT JOIN users u ON a.userid = u.userid
-    LEFT JOIN mechanics m ON a.moid = m.moid
-    ORDER BY a.date, a.time
-  ";
+    $sql = "
+        SELECT 
+            a.aid,
+            a.appointmentDate AS date,
+            a.appointmentTime AS time,
+            a.totalLaborTime AS duration,
+            a.status,
+            a.repairs AS note,
+            u.firstname AS customer_firstname,
+            u.lastname AS customer_lastname,
+            m.firstname AS mechanic_firstname,
+            m.lastname AS mechanic_lastname
+        FROM appointments a
+        LEFT JOIN user u ON a.userid = u.userid
+        LEFT JOIN user m ON a.mechanicid = m.userid AND m.role = 2
+        ORDER BY a.appointmentDate, a.appointmentTime
+    ";
 
-  $result = mysqli_query($conn, $sql);
+    $result = mysqli_query($conn, $sql);
 
-   if (!$result) {
-        http_response_code(500); // Set proper HTTP status
+    if (!$result) {
+        http_response_code(500);
         echo json_encode([
             "success" => false,
             "message" => mysqli_error($conn),
@@ -40,5 +40,5 @@ function getAllAppointments($conn)
         "success" => true,
         "data" => $appointments
     ]);
-    exit; // Ensure nothing else is output
+    exit;
 }
