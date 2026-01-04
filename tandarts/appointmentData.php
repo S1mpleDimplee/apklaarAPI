@@ -4,7 +4,7 @@ function checkAppointments($conn) {
     $tomorrow = date("Y-m-d", strtotime("+1 day"));
 
     // Select only today and tomorrow appointments
-    $sql = "SELECT `date` FROM `appointments` 
+    $sql = "SELECT `date` FROM `appointment` 
             WHERE DATE(`date`) IN ('$today', '$tomorrow')";
     $result = $conn->query($sql);
 
@@ -18,7 +18,6 @@ function checkAppointments($conn) {
             if ($rowDate === $tomorrow) $appointmentsTomorrow++;
         }
     }
-
     return [
         "today" => $appointmentsToday,
         "tomorrow" => $appointmentsTomorrow
