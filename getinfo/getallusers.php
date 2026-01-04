@@ -10,7 +10,7 @@ function getAllUsers($conn) {
             role,
             isverified,
             created_at
-        FROM users
+        FROM user
         ORDER BY created_at DESC
     ";
 
