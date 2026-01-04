@@ -85,6 +85,10 @@ switch ($function) {
     case 'getcars':
         getcars($data, $connection);
         break;
+    case 'fetchinvoices':
+    fetchinvoices($data, $connection);
+    break;
+
 
 
 
