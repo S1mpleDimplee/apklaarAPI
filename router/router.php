@@ -11,20 +11,12 @@ $currentFileName = basename(__FILE__);
 
 // Include other backend functions
 
-include '../Treatments/addtreatment.php';
-include '../Treatments/removetreatment.php';
-include '../Treatments/edittreatment.php';
-include '../Treatments/getalltreatments.php';
+
 include '../appointments/createappointment.php';
 include '../appointments/getappointmentdata.php';
 include '../appointments/getAllAppointments.php';
-include '../getinfo/getalldentists.php';
-include '../getinfo/getallpatients.php';
 include '../getinfo/getallusers.php';
-include '../getinfo/getcurrentdentist.php';
 include '../register/register.php';
-include '../tandarts/appointmentData.php';
-include '../tandarts/getAppointmentsForWeek.php';
 include '../userdata/getAllUserData.php';
 include '../userdata/getUserData.php';
 include '../userdata/updateUserData.php';
