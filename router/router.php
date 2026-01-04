@@ -40,8 +40,6 @@ include '../dashboardinfo/customerdashboard.php';
 include '../fetchinvoices/fetchinvoices.php';
 include '../generateinvoice/generateinvoice.php';
 include '../stripe_payment/stripe_payment.php';
-include '../getinfo/getallusers.php';
-
 
 
 
@@ -147,8 +145,15 @@ switch ($function) {
     case 'stripe_payment':
         handleStripePayment($data, $connection);
         break;
-   
-
+    case 'fetchreparations':
+        fetchReparations($data, $connection);
+        break;
+    case 'fetchmechanics':
+        fetchMechanics($connection);
+        break;
+    case 'createappointment':
+        CreateAppointment($data, $connection);
+        break;
     default:
         echo json_encode(["success" => false, "message" => "Functie niet gevonden"]);
         break;

@@ -22,7 +22,7 @@ function removeCar($data, $conn)
         AddNotification([
             "userid" => $userid,
             "preset" => "cardeleted",
-            "carname" => $data['carname'] ?? 'Onbekende auto'
+            "info" => $data['carname'] ?? 'Onbekende auto'
         ], $conn);
 
     } else {
