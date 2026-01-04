@@ -1,29 +1,32 @@
 <?php
-
-
-function getAllUsers($conn)
-{
-    $sql = "SELECT users.*, useradresses.* 
-            FROM users 
-            JOIN useradresses ON users.userid = useradresses.userid";
+function getAllUsers($conn) {
+    $sql = "
+        SELECT 
+            userid,
+            email,
+            firstname,
+            lastname,
+            phonenumber,
+            role,
+            isverified,
+            created_at
+        FROM users
+        ORDER BY created_at DESC
+    ";
 
     $result = mysqli_query($conn, $sql);
-    $users = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-
-    if (!$users) {
+    if (!$result) {
         echo json_encode([
-            "success" => false,
-            "message" => "Er zijn nog geen gebruikers geregistreerd",
-            "data" => []
+            'success' => false,
+            'message' => mysqli_error($conn)
         ]);
         return;
     }
 
     echo json_encode([
-        "success" => true,
-        "message" => "Alle gebruikers zijn succesvol opgehaald",
-        "data" => $users
+        'success' => true,
+        'data' => mysqli_fetch_all($result, MYSQLI_ASSOC)
     ]);
-    return;
 }
+

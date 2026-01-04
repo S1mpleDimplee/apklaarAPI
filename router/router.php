@@ -15,12 +15,10 @@ $currentFileName = basename(__FILE__);
 include '../appointments/createappointment.php';
 include '../appointments/getappointmentdata.php';
 include '../appointments/getAllAppointments.php';
-include '../getinfo/getallusers.php';
+include '../getinfo/getalldentists.php';
+include '../getinfo/getallpatients.php';
+include '../getinfo/getcurrentdentist.php';
 include '../register/register.php';
-include '../userdata/getAllUserData.php';
-include '../userdata/getUserData.php';
-include '../userdata/updateUserData.php';
-include '../userdata/updateUserRole.php';
 include '../emailtriggers/verificationcode.php';
 include '../addcar/addcar.php';
 include '../getcars/getcars.php';
@@ -31,6 +29,8 @@ include '../dashboardinfo/customerdashboard.php';
 include '../fetchinvoices/fetchinvoices.php';
 include '../generateinvoice/generateinvoice.php';
 include '../stripe_payment/stripe_payment.php';
+include '../getinfo/getallusers.php';
+
 
 
 
@@ -83,6 +83,16 @@ switch ($function) {
     getAllUsers($connection);
     break;
 
+
+
+
+
+    // get functions
+    case 'getalldentists':
+        getAllDentists($connection);
+        break;
+
+
     // appointment functions
     case 'checkappointments':
         $stats = checkAppointments($connection);
@@ -126,15 +136,8 @@ switch ($function) {
     case 'stripe_payment':
         handleStripePayment($data, $connection);
         break;
-    case 'fetchreparations':
-        fetchReparations($data, $connection);
-        break;
-    case 'fetchmechanics':
-        fetchMechanics($connection);
-        break;
-    case 'createappointment':
-        CreateAppointment($data, $connection);
-        break;
+   
+
     default:
         echo json_encode(["success" => false, "message" => "Functie niet gevonden"]);
         break;
