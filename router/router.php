@@ -30,7 +30,7 @@ include '../appointments/createappointment.php';
 include '../appointments/getappointmentdata.php';
 include '../appointments/getAllAppointments.php';
 include '../appointments/getMechanicAppointments.php';
-include '../tandarts/getAppointmentsForWeek.php';
+include '../appointments/getAppointmentsForWeek.php';
 include '../getinfo/getalldentists.php';
 include '../getinfo/getallpatients.php';
 include '../getinfo/getallusers.php';
@@ -107,8 +107,24 @@ switch ($function) {
         getMechanicAppointments($data, $connection);
         break;
     case 'getappointmentsforweek':
-        getAppointmentsForWeek($data, $connection);
+    // Force integer conversion for week and year
+    $week = isset($data['week']) ? intval($data['week']) : 0;
+    $year = isset($data['year']) ? intval($data['year']) : 0;
+    $mechanicId = isset($data['mechanicId']) ? strval($data['mechanicId']) : '';
+
+    // Check for missing values
+    if (!$week || !$year || !$mechanicId) {
+        echo json_encode([
+            "isSuccess" => false,
+            "message" => "week, year of mechanicId ontbreekt"
+        ]);
         break;
+    }
+
+    // Call the function with proper types and order
+    getAppointmentsForWeek($year, $week, $mechanicId, $connection);
+    break;
+
     case 'checkappointments':
         $stats = checkAppointments($connection);
         echo json_encode([
