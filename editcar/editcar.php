@@ -6,15 +6,15 @@ function editCar($data, $conn)
     $brand = $data['brand'] ?? null;
     $model = $data['model'] ?? null;
     $buildyear = $data['buildyear'] ?? null;
-    $licensePlateCountry = $data['countryCode'] ?? null;
-    $licensePlate = $data['licensePlate'] ?? null;
+    $licensePlateCountry = $data['licenseplatecountry'] ?? null;
+    $licensePlate = $data['licenseplate'] ?? null;
 
 
     // Niet verplicht
     $color = $data['color'] ?? null;
-    $fuelType = $data['fuelType'] ?? null;
-    $carNickname = $data['carNickname'] ?? null;
-    $lastInspection = $data['lastInspection'] ?? null;
+    $fuelType = $data['fueltype'] ?? null;
+    $carNickname = $data['carnickname'] ?? null;
+    $lastInspection = $data['lastinspection'] ?? null;
     $carimage = $data['carimage'] ?? null;
 
     $userid = $data['userid'] ?? null;
@@ -37,14 +37,14 @@ function editCar($data, $conn)
                 model = '$model',
                 color = '$color',
                 carimage = '$carimage'
-                WHERE userid = '$userid'";
+                WHERE userid = '$userid' AND carid = '" . $data['carid'] . "'";
 
     if (mysqli_query($conn, $editCarSql)) {
 
         AddNotification([
             "userid" => $userid,
             "preset" => "caredited",
-            "carname" => $carNickname
+            "info" => $carNickname
         ], $conn);
 
         echo json_encode([
