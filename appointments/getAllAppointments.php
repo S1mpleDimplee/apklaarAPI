@@ -1,4 +1,5 @@
 <?php
+
 function getAllAppointments($conn)
 {
   header('Content-Type: application/json');
@@ -41,4 +42,3 @@ function getAllAppointments($conn)
     ]);
     exit; // Ensure nothing else is output
 }
-?>

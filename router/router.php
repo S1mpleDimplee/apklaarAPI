@@ -17,6 +17,7 @@ include '../Treatments/edittreatment.php';
 include '../Treatments/getalltreatments.php';
 include '../appointments/createappointment.php';
 include '../appointments/getappointmentdata.php';
+include '../appointments/getAllAppointments.php';
 include '../getinfo/getalldentists.php';
 include '../getinfo/getallpatients.php';
 include '../getinfo/getallusers.php';
@@ -39,6 +40,7 @@ include '../dashboardinfo/customerdashboard.php';
 include '../fetchinvoices/fetchinvoices.php';
 include '../generateinvoice/generateinvoice.php';
 include '../stripe_payment/stripe_payment.php';
+
 
 
 
@@ -107,6 +109,9 @@ switch ($function) {
         break;
     case 'newnotification':
         SendVerificationEmail($data);
+        break;
+    case 'getallappointments':
+        getAllAppointments($connection);
         break;
     case 'checkverificationcode':
         CheckIfCodeIsValid($data, $connection);
