@@ -6,11 +6,22 @@ header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type: application/json");
 session_start();
 
-// Dynamically get the current file name
-$currentFileName = basename(__FILE__);
+// Database connection
+$connection = mysqli_connect("localhost", "root", "", "apklaar");
+if (!$connection) {
+    die(json_encode([
+        "success" => false,
+        "message" => "Connectie met de database is mislukt contacteer ons via apklaar@gmail.com"
+    ]));
+}
 
-// Include other backend functions
+// Handle preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
 
+// Include backend functions
 include '../Treatments/addtreatment.php';
 include '../Treatments/removetreatment.php';
 include '../Treatments/edittreatment.php';
@@ -18,13 +29,13 @@ include '../Treatments/getalltreatments.php';
 include '../appointments/createappointment.php';
 include '../appointments/getappointmentdata.php';
 include '../appointments/getAllAppointments.php';
+include '../appointments/getMechanicAppointments.php';
+include '../tandarts/getAppointmentsForWeek.php';
 include '../getinfo/getalldentists.php';
 include '../getinfo/getallpatients.php';
 include '../getinfo/getallusers.php';
 include '../getinfo/getcurrentdentist.php';
 include '../register/register.php';
-include '../tandarts/appointmentData.php';
-include '../tandarts/getAppointmentsForWeek.php';
 include '../userdata/getAllUserData.php';
 include '../userdata/getUserData.php';
 include '../userdata/updateUserData.php';
@@ -43,84 +54,37 @@ include '../stripe_payment/stripe_payment.php';
 include '../fetchreparations/fetchreparations.php';
 include '../fetchmechanics/fetchmechanics.php';
 
-
-
-
-
-
-// Handle preflight OPTIONS request
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
-
-// Database connection
-$connection = mysqli_connect("localhost", "root", "", "apklaar");
-if (!$connection) {
-    error_log("Connectie met de database is mislukt contacteer ons via apklaar@gmail.com");
-    die(json_encode(["success" => false, "message" => "Connectie met de database is mislukt contacteer ons via apklaar@gmail.com"]));
-}
-
 // Read POST data
-$data = json_decode(file_get_contents('php://input'), true);
-if (!$data) {
-    error_log("Er is iets fout gegaan contacteer ons via apklaar@gmail.com");
-    die(json_encode(["success" => false, "message" => "Er is iets fout gegaan contacteer ons via apklaar@gmail.com"]));
+$request = json_decode(file_get_contents('php://input'), true);
+if (!$request) {
+    die(json_encode([
+        "success" => false,
+        "message" => "Er is iets fout gegaan contacteer ons via apklaar@gmail.com"
+    ]));
 }
 
-// Get function name
-$function = strtolower($data['function'] ?? '');
-$data = $data['data'] ?? [];
+// Get function name and data
+$function = strtolower($request['function'] ?? '');
+$data = $request['data'] ?? [];
 
-// Router switch
+// Router
 switch ($function) {
-    // register and login functions
+    // User / auth
     case 'adduser':
         addUser($data, $connection);
         break;
     case 'loginuser':
         checkLogin($data, $connection);
         break;
+
+    // Notifications
     case 'getnotifications':
         getNotifications($data, $connection);
         break;
+
+    // Cars
     case 'getcars':
         getcars($data, $connection);
-        break;
-    case 'fetchinvoices':
-    fetchinvoices($data, $connection);
-    break;
-
-
-
-
-    // get functions
-    case 'getalldentists':
-        getAllDentists($connection);
-        break;
-
-
-    // appointment functions
-    case 'checkappointments':
-        $stats = checkAppointments($connection);
-        echo json_encode([
-            "success" => true,
-            "message" => "Appointments counted",
-            "data" => $stats
-        ]);
-        break;
-
-    case 'sendverificationcode':
-        SendVerificationEmail($data);
-        break;
-    case 'newnotification':
-        SendVerificationEmail($data);
-        break;
-    case 'getallappointments':
-        getAllAppointments($connection);
-        break;
-    case 'checkverificationcode':
-        CheckIfCodeIsValid($data, $connection);
         break;
     case 'addcar':
         addCar($data, $connection);
@@ -131,6 +95,30 @@ switch ($function) {
     case 'editcar':
         editCar($data, $connection);
         break;
+
+    // Appointments
+    case 'createappointment':
+        CreateAppointment($data, $connection);
+        break;
+    case 'getallappointments':
+        getAllAppointments($connection);
+        break;
+    case 'getmechanicappointments':
+        getMechanicAppointments($data, $connection);
+        break;
+    case 'getappointmentsforweek':
+        getAppointmentsForWeek($data, $connection);
+        break;
+    case 'checkappointments':
+        $stats = checkAppointments($connection);
+        echo json_encode([
+            "success" => true,
+            "message" => "Appointments counted",
+            "data" => $stats
+        ]);
+        break;
+
+    // Other
     case 'fetchcustomerdashboard':
         fetchCustomerDashboard($data, $connection);
         break;
@@ -149,10 +137,33 @@ switch ($function) {
     case 'fetchmechanics':
         fetchMechanics($connection);
         break;
-    case 'createappointment':
-        CreateAppointment($data, $connection);
+
+    // Get info
+    case 'getalldentists':
+        getAllDentists($connection);
         break;
+    case 'getallpatients':
+        getAllPatients($connection);
+        break;
+    case 'getallusers':
+        getAllUsers($connection);
+        break;
+    case 'getcurrentdentist':
+        getCurrentDentist($connection);
+        break;
+
+    // Email verification
+    case 'sendverificationcode':
+        SendVerificationEmail($data);
+        break;
+    case 'checkverificationcode':
+        CheckIfCodeIsValid($data, $connection);
+        break;
+
     default:
-        echo json_encode(["success" => false, "message" => "Functie niet gevonden"]);
+        echo json_encode([
+            "success" => false,
+            "message" => "Functie niet gevonden"
+        ]);
         break;
 }
