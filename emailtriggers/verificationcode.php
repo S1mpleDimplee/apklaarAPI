@@ -11,7 +11,7 @@ function SendVerificationEmail($data)
   $_SESSION['verification_code'] = $code;
 
   $to = $data['email'] ?? '';
-  $name = "Jaylano van der Veen";
+  $name = $data['name'] ?? '';
 
   $mail = new PHPMailer(true);
 

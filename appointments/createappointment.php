@@ -2,24 +2,46 @@
 
 function createAppointment($data, $conn)
 {
-    $aid = $data['aid'] ?? null;
-    $userid = $data['userid'] ?? null;
-    $repid = $data['repid'] ?? null;
-    $moid = $data['moid'] ?? null;
-    $apk = $data['apk'] ?? null;
-    $note = $data['note'] ?? null;
-    $time = $data['time'] ?? null;
-    $date = $data['date'] ?? null;
-    $duration = $data['duration'] ?? null;
+    $userid = $data['userid'];
+    $mechanicid = $data['mechanicid'];
+    $appointmentDate = $data['appointmentDate'];
+    $appointmentTime = $data['appointmentTime'];
+    $repairs = json_encode($data['repairs']);
+    $totalNetPrice = $data['totals']['netPrice'];
+    $totalGrossPrice = $data['totals']['grossPrice'];
+    $totalLaborTime = $data['totals']['totalLaborTime'];
 
-    $sql = "INSERT INTO appointments (aid, userid, repid, moid, apk, note, time, date, duration) VALUES 
-    ('$aid','$userid', '$repid','$moid', '$apk', '$note', '$time', '$date', '$duration')";
+    $sql = "INSERT INTO appointments ( userid, mechanicid, appointmentDate, appointmentTime, repairs, totalNetPrice, totalGrossPrice, totalLaborTime) 
+            VALUES ('$userid', '$mechanicid', '$appointmentDate', '$appointmentTime', '$repairs', '$totalNetPrice', '$totalGrossPrice', '$totalLaborTime')";
+
+
+    $emptyFields = [];
+    foreach (['userid', 'mechanicid', 'appointmentDate', 'appointmentTime', 'repairs', 'totals'] as $field) {
+        if (empty($data[$field])) {
+            $emptyFields[] = $field;
+        }
+    }
+    if (empty($emptyFields)) {
+        echo json_encode([
+            "success" => false,
+            "message" => "De volgende velden zijn verplicht en mogen niet leeg zijn: " . implode(", ", $emptyFields)
+        ]);
+        return;
+    }
+
 
     if (mysqli_query($conn, $sql)) {
         echo json_encode([
             "success" => true,
-            "message" => "Afspraak succesvol aangemaakt"
+            "message" => "Afspraak succesvol aangemaakt",
         ]);
+
+        // AddNotification([
+        //     "userid" => $userid,
+        //     "preset" => "appointmentcreated",
+        //     "appointmentId" => $aid
+
+        // ], $conn);
     } else {
         echo json_encode([
             "success" => false,
