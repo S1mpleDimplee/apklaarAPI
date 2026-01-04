@@ -14,13 +14,17 @@ function getAppointmentData($data, $conn)
     return;
   }
 
-  // Sanitize input
-  $aid = mysqli_real_escape_string($conn, $data['aid']);
+   $stmt = $conn->prepare(
+        "SELECT aid, userid, repid, moid, apk, note, time, date, duration
+         FROM appointments
+         WHERE aid = ?"
+    );
 
-  // Query the database
-  $sql = "SELECT * FROM appointment WHERE id = '$aid'";
-  $result = mysqli_query($conn, $sql);
+    $stmt->bind_param("i", $data['aid']);
+    $stmt->execute();
 
+    $result = $stmt->get_result();
+    $appointment = $result->fetch_assoc();
   if (!$result) {
     echo json_encode([
       "success" => false,

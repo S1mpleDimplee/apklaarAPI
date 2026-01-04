@@ -104,10 +104,11 @@ function verifyPayment($data, $conn)
                     'message' => 'Betaling succesvol verwerkt!'
                 ]);
 
-                // AddNotification([
-                //     "userid" => $data['userid'],
-                //     "preset" => "invoice_paid"
-                // ], $conn);
+                AddNotification([
+                    "userid" => $data['userid'],
+                    "preset" => "invoice_paid",
+                    "info" => $data['invoiceid']
+                ], $conn);
             } else {
                 echo json_encode([
                     'success' => false,
