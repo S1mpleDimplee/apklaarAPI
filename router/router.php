@@ -17,7 +17,7 @@ include '../Treatments/edittreatment.php';
 include '../Treatments/getalltreatments.php';
 include '../appointments/createappointment.php';
 include '../appointments/getappointmentdata.php';
-include '../appointments/getAllAppointments.php';
+include '../appointments/cancelappointment.php';
 include '../getinfo/getalldentists.php';
 include '../getinfo/getallpatients.php';
 include '../getinfo/getallusers.php';
@@ -42,10 +42,6 @@ include '../generateinvoice/generateinvoice.php';
 include '../stripe_payment/stripe_payment.php';
 include '../fetchreparations/fetchreparations.php';
 include '../fetchmechanics/fetchmechanics.php';
-
-
-
-
 
 
 // Handle preflight OPTIONS request
@@ -87,10 +83,6 @@ switch ($function) {
     case 'getcars':
         getcars($data, $connection);
         break;
-    case 'fetchinvoices':
-    fetchinvoices($data, $connection);
-    break;
-
 
 
 
@@ -115,9 +107,6 @@ switch ($function) {
         break;
     case 'newnotification':
         SendVerificationEmail($data);
-        break;
-    case 'getallappointments':
-        getAllAppointments($connection);
         break;
     case 'checkverificationcode':
         CheckIfCodeIsValid($data, $connection);
@@ -151,6 +140,9 @@ switch ($function) {
         break;
     case 'createappointment':
         CreateAppointment($data, $connection);
+        break;
+    case 'cancelappointment':
+        Cancelappointment($data, $connection);
         break;
     default:
         echo json_encode(["success" => false, "message" => "Functie niet gevonden"]);

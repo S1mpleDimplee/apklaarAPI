@@ -4,6 +4,7 @@ function createAppointment($data, $conn)
 {
     $userid = $data['userid'];
     $mechanicid = $data['mechanicid'];
+    $carid = $data['carid'];
     $appointmentDate = $data['appointmentDate'];
     $appointmentTime = $data['appointmentTime'];
     $repairs = json_encode($data['repairs']);
@@ -11,20 +12,15 @@ function createAppointment($data, $conn)
     $totalGrossPrice = $data['totals']['grossPrice'];
     $totalLaborTime = $data['totals']['totalLaborTime'];
 
-    $sql = "INSERT INTO appointments ( userid, mechanicid, appointmentDate, appointmentTime, repairs, totalNetPrice, totalGrossPrice, totalLaborTime) 
-            VALUES ('$userid', '$mechanicid', '$appointmentDate', '$appointmentTime', '$repairs', '$totalNetPrice', '$totalGrossPrice', '$totalLaborTime')";
+    $sql = "INSERT INTO appointments ( userid, mechanicid, carid, appointmentDate, appointmentTime, repairs, totalNetPrice, totalGrossPrice, totalLaborTime) 
+            VALUES ('$userid', '$mechanicid', '$carid', '$appointmentDate', '$appointmentTime', '$repairs', '$totalNetPrice', '$totalGrossPrice', '$totalLaborTime')";
 
 
-    $emptyFields = [];
-    foreach (['userid', 'mechanicid', 'appointmentDate', 'appointmentTime', 'repairs', 'totals'] as $field) {
-        if (empty($data[$field])) {
-            $emptyFields[] = $field;
-        }
-    }
-    if (empty($emptyFields)) {
+    if ($userid && $mechanicid && $carid && $appointmentDate && $appointmentTime && $repairs && $totalNetPrice && $totalGrossPrice && $totalLaborTime) {
+    } else {
         echo json_encode([
             "success" => false,
-            "message" => "De volgende velden zijn verplicht en mogen niet leeg zijn: " . implode(", ", $emptyFields)
+            "message" => "Vul alle velden in"
         ]);
         return;
     }
