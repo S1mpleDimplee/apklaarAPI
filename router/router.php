@@ -39,7 +39,8 @@ include '../dashboardinfo/customerdashboard.php';
 include '../fetchinvoices/fetchinvoices.php';
 include '../generateinvoice/generateinvoice.php';
 include '../stripe_payment/stripe_payment.php';
-include '../appointments/getAllAppointments.php';
+
+
 
 
 
@@ -131,9 +132,7 @@ switch ($function) {
     case 'stripe_payment':
         handleStripePayment($data, $connection);
         break;
-    case 'getallappointments':
-    getAllAppointments($connection);
-    break;
+   
 
     default:
         echo json_encode(["success" => false, "message" => "Functie niet gevonden"]);
