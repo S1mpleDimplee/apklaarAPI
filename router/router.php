@@ -20,7 +20,6 @@ include '../register/register.php';
 include '../userdata/getAllUserData.php';
 include '../userdata/getUserData.php';
 include '../userdata/updateUserData.php';
-include '../userdata/updatecurrentdentist.php';
 include '../userdata/updateUserRole.php';
 include '../emailtriggers/verificationcode.php';
 include '../addcar/addcar.php';
@@ -83,16 +82,6 @@ switch ($function) {
     case 'getallusers':
     getAllUsers($connection);
     break;
-
-
-
-
-
-    // get functions
-    case 'getalldentists':
-        getAllDentists($connection);
-        break;
-
 
     // appointment functions
     case 'checkappointments':
