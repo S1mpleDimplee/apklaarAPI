@@ -39,6 +39,7 @@ include '../dashboardinfo/customerdashboard.php';
 include '../fetchinvoices/fetchinvoices.php';
 include '../generateinvoice/generateinvoice.php';
 include '../stripe_payment/stripe_payment.php';
+include '../fetchreparations/fetchreparations.php';
 
 
 // Handle preflight OPTIONS request
@@ -128,6 +129,9 @@ switch ($function) {
         break;
     case 'stripe_payment':
         handleStripePayment($data, $connection);
+        break;
+    case 'fetchreparations':
+        fetchReparations($data, $connection);
         break;
     default:
         echo json_encode(["success" => false, "message" => "Functie niet gevonden"]);

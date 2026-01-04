@@ -2,43 +2,48 @@
 
 require "../emailtriggers/newnotification.php";
 
-$notifcationpresets = [
-    "welcome" => [
-        "title" => "Welkom bij onze dienst!",
-        "message" => "Bedankt voor het registreren. We zijn blij je aan boord te hebben.",
-        "type" => "info"
-    ],
-    "password_change" => [
-        "title" => "Wachtwoord gewijzigd",
-        "message" => "Je wachtwoord is succesvol gewijzigd. Als jij dit niet was, neem dan onmiddellijk contact op met de ondersteuning.",
-        "type" => "warning"
-    ],
-    "verfication_success" => [
-        "title" => "Account geverifieerd",
-        "message" => "Je account is succesvol geverifieerd. Je kunt nu inloggen en onze diensten gebruiken.",
-        "type" => "success"
-    ],
-    "caradded" => [
-        "title" => "Nieuwe auto toegevoegd",
-        "message" => "U heeft een nieuwe auto genaamd \" {carname} \" aan uw account toegevoegd. U ontvangt nu meldingen voor deze auto.",
-        "type" => "info"
-    ],
-    "cardeleted" => [
-        "title" => "Auto verwijderd",
-        "message" => "De auto {carname} is van uw account verwijderd. Als dit een vergissing is, neem dan contact op met de klantenservice.",
-        "type" => "warning"
-    ],
-    "caredited" => [
-        "title" => "Auto aangepast",
-        "message" => "De gegevens van uw auto {carname} zijn succesvol aangepast.",
-        "type" => "success"
-    ],
-    "invoice_paid" => [
-        "title" => "Factuur betaald",
-        "message" => "Uw factuur #{invoiceid} is succesvol betaald. Bedankt voor uw betaling!",
-        "type" => "success"
-    ]
-];
+function getNotificationPresets($preset, $info = "")
+{
+    $presets = [
+        "welcome" => [
+            "title" => "Welkom bij onze dienst!",
+            "message" => "Bedankt voor het registreren. We zijn blij je aan boord te hebben.",
+            "type" => "info"
+        ],
+        "password_change" => [
+            "title" => "Wachtwoord gewijzigd",
+            "message" => "Je wachtwoord is succesvol gewijzigd. Als jij dit niet was, neem dan onmiddellijk contact op met de ondersteuning.",
+            "type" => "warning"
+        ],
+        "verfication_success" => [
+            "title" => "Account geverifieerd",
+            "message" => "Je account is succesvol geverifieerd. Je kunt nu inloggen en onze diensten gebruiken.",
+            "type" => "success"
+        ],
+        "caradded" => [
+            "title" => "Nieuwe auto toegevoegd",
+            "message" => "U heeft een nieuwe auto genaamd " . $info . " aan uw account toegevoegd. U ontvangt nu meldingen voor deze auto.",
+            "type" => "info"
+        ],
+        "cardeleted" => [
+            "title" => "Auto verwijderd",
+            "message" => "De auto " . $info . " is van uw account verwijderd. Als dit een vergissing is, neem dan contact op met de klantenservice.",
+            "type" => "warning"
+        ],
+        "caredited" => [
+            "title" => "Auto aangepast",
+            "message" => "De gegevens van uw auto " . $info . " zijn succesvol aangepast.",
+            "type" => "success"
+        ],
+        "invoice_paid" => [
+            "title" => "Factuur betaald",
+            "message" => "Uw factuur #" . $info . " is succesvol betaald. Bedankt voor uw betaling!",
+            "type" => "success"
+        ]
+    ];
+
+    return $presets[$preset] ?? ["title" => "", "message" => ""];
+}
 
 function AddNotification($data, $conn)
 {
@@ -46,10 +51,10 @@ function AddNotification($data, $conn)
 
     $userid = $data['userid'] ?? null;
     $preset = $data['preset'] ?? null;
-    $carname = $data['carname'] ?? "";
+    $info = $data['info'] ?? "";
 
-    $title = $notifcationpresets[$preset]['title'] ?? "";
-    $message = $notifcationpresets[$preset]['message'] ?? "";
+    $title = getNotificationPresets($preset, $info)['title'] ?? "";
+    $message = getNotificationPresets($preset, $info)['message'] ?? "";
 
     if ($title == "" && $message == "") {
         return;
