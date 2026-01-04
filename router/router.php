@@ -14,7 +14,7 @@ $currentFileName = basename(__FILE__);
 
 include '../appointments/createappointment.php';
 include '../appointments/getappointmentdata.php';
-include '../appointments/getAllAppointments.php';
+include '../appointments/cancelappointment.php';
 include '../getinfo/getalldentists.php';
 include '../getinfo/getallpatients.php';
 include '../getinfo/getcurrentdentist.php';
@@ -30,10 +30,6 @@ include '../fetchinvoices/fetchinvoices.php';
 include '../generateinvoice/generateinvoice.php';
 include '../stripe_payment/stripe_payment.php';
 include '../getinfo/getallusers.php';
-
-
-
-
 
 
 
@@ -82,18 +78,10 @@ switch ($function) {
     case 'getallusers':
     getAllUsers($connection);
     break;
-
-
-
-
-
-    // get functions
     case 'getalldentists':
         getAllDentists($connection);
         break;
 
-
-    // appointment functions
     case 'checkappointments':
         $stats = checkAppointments($connection);
         echo json_encode([
@@ -108,9 +96,6 @@ switch ($function) {
         break;
     case 'newnotification':
         SendVerificationEmail($data);
-        break;
-    case 'getallappointments':
-        getAllAppointments($connection);
         break;
     case 'checkverificationcode':
         CheckIfCodeIsValid($data, $connection);
@@ -136,8 +121,12 @@ switch ($function) {
     case 'stripe_payment':
         handleStripePayment($data, $connection);
         break;
-   
-
+    case 'createappointment':
+        CreateAppointment($data, $connection);
+        break;
+    case 'cancelappointment':
+        Cancelappointment($data, $connection);
+        break;
     default:
         echo json_encode(["success" => false, "message" => "Functie niet gevonden"]);
         break;
