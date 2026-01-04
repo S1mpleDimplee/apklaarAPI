@@ -22,24 +22,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 // Include backend functions
-include '../Treatments/addtreatment.php';
-include '../Treatments/removetreatment.php';
-include '../Treatments/edittreatment.php';
-include '../Treatments/getalltreatments.php';
 include '../appointments/createappointment.php';
 include '../appointments/getappointmentdata.php';
 include '../appointments/getAllAppointments.php';
 include '../appointments/getMechanicAppointments.php';
 include '../appointments/getAppointmentsForWeek.php';
-include '../getinfo/getalldentists.php';
-include '../getinfo/getallpatients.php';
-include '../getinfo/getcurrentdentist.php';
 include '../register/register.php';
-include '../userdata/getAllUserData.php';
-include '../userdata/getUserData.php';
-include '../userdata/updateUserData.php';
-include '../userdata/updatecurrentdentist.php';
-include '../userdata/updateUserRole.php';
 include '../emailtriggers/verificationcode.php';
 include '../addcar/addcar.php';
 include '../getcars/getcars.php';
@@ -106,23 +94,23 @@ switch ($function) {
         getMechanicAppointments($data, $connection);
         break;
     case 'getappointmentsforweek':
-    // Force integer conversion for week and year
-    $week = isset($data['week']) ? intval($data['week']) : 0;
-    $year = isset($data['year']) ? intval($data['year']) : 0;
-    $mechanicId = isset($data['mechanicId']) ? strval($data['mechanicId']) : '';
+        // Force integer conversion for week and year
+        $week = isset($data['week']) ? intval($data['week']) : 0;
+        $year = isset($data['year']) ? intval($data['year']) : 0;
+        $mechanicId = isset($data['mechanicId']) ? strval($data['mechanicId']) : '';
 
-    // Check for missing values
-    if (!$week || !$year || !$mechanicId) {
-        echo json_encode([
-            "isSuccess" => false,
-            "message" => "week, year of mechanicId ontbreekt"
-        ]);
+        // Check for missing values
+        if (!$week || !$year || !$mechanicId) {
+            echo json_encode([
+                "isSuccess" => false,
+                "message" => "week, year of mechanicId ontbreekt"
+            ]);
+            break;
+        }
+
+        // Call the function with proper types and order
+        getAppointmentsForWeek($year, $week, $mechanicId, $connection);
         break;
-    }
-
-    // Call the function with proper types and order
-    getAppointmentsForWeek($year, $week, $mechanicId, $connection);
-    break;
 
     case 'checkappointments':
         $stats = checkAppointments($connection);
@@ -154,19 +142,7 @@ switch ($function) {
         fetchMechanics($connection);
         break;
 
-    // Get info
-    case 'getalldentists':
-        getAllDentists($connection);
-        break;
-    case 'getallpatients':
-        getAllPatients($connection);
-        break;
-    case 'getallusers':
-        getAllUsers($connection);
-        break;
-    case 'getcurrentdentist':
-        getCurrentDentist($connection);
-        break;
+
 
     // Email verification
     case 'sendverificationcode':
