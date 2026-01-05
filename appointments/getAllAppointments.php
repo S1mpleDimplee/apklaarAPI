@@ -1,5 +1,4 @@
 <?php
-
 function getAllAppointments($conn)
 {
     header('Content-Type: application/json');
@@ -15,10 +14,14 @@ function getAllAppointments($conn)
             u.firstname AS customer_firstname,
             u.lastname AS customer_lastname,
             m.firstname AS mechanic_firstname,
-            m.lastname AS mechanic_lastname
+            m.lastname AS mechanic_lastname,
+            c.carid,
+            c.brand,
+            c.model
         FROM appointments a
         LEFT JOIN user u ON a.userid = u.userid
         LEFT JOIN user m ON a.mechanicid = m.userid AND m.role = 2
+        LEFT JOIN car c ON a.carid = c.carid
         ORDER BY a.appointmentDate, a.appointmentTime
     ";
 
