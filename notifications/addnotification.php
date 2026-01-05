@@ -2,7 +2,7 @@
 
 require "../emailtriggers/newnotification.php";
 
-function getNotificationPresets($preset, $info = "")
+function getNotificationPresets($preset, $info = "", $appointmenttime = "", $appointmentcar = "")
 {
     $presets = [
         "welcome" => [
@@ -39,6 +39,16 @@ function getNotificationPresets($preset, $info = "")
             "title" => "Factuur betaald",
             "message" => "Uw factuur #" . $info . " is succesvol betaald. Bedankt voor uw betaling!",
             "type" => "success"
+        ],
+        "created_appointment" => [
+            "title" => "Afspraak aangemaakt",
+            "message" => "Uw afspraak op " . $appointmenttime . " is succesvol aangemaakt. voor de auto: " . $appointmentcar . ".",
+            "type" => "info"
+        ],
+        "cancelled_appointment" => [
+            "title" => "Afspraak geannuleerd",
+            "message" => "Uw afspraak op " . $appointmenttime . " is succesvol geannuleerd.",
+            "type" => "warning"
         ]
     ];
 
@@ -52,6 +62,8 @@ function AddNotification($data, $conn)
     $userid = $data['userid'] ?? null;
     $preset = $data['preset'] ?? null;
     $info = $data['info'] ?? "";
+    $appointmenttime = $data['appointmenttime'] ?? "";
+    $appointmentcar = $data['appointmentcar'] ?? "";
 
     $title = getNotificationPresets($preset, $info)['title'] ?? "";
     $message = getNotificationPresets($preset, $info)['message'] ?? "";

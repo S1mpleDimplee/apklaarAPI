@@ -10,6 +10,12 @@ function Cancelappointment($data, $conn)
             "success" => true,
             "message" => "Afspraak succesvol geannuleerd."
         ]);
+
+        // AddNotification([
+        //     "userid" => $data['userid'] ?? null,
+        //     "preset" => "cancelled_appointment",
+        //     "appointmenttime" => $data['appointmenttime'] ?? ''
+        // ], $conn);
     } else {
         echo json_encode([
             "success" => false,
