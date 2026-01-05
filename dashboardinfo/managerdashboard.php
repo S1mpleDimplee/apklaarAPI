@@ -37,6 +37,16 @@ function fetchManagerDashboardStats($conn)
     $customersResult = mysqli_query($conn, $customersSql);
     $customers = mysqli_fetch_assoc($customersResult);
 
+    $revenueSql = "
+    SELECT COALESCE(SUM(cost), 0) AS total
+    FROM invoice
+    WHERE status = 'payed'
+";
+
+$revenueResult = mysqli_query($conn, $revenueSql);
+$revenue = mysqli_fetch_assoc($revenueResult);
+
+
     echo json_encode([
         "success" => true,
         "data" => [
@@ -46,7 +56,8 @@ function fetchManagerDashboardStats($conn)
                 "scheduled" => (int)$appointments['scheduled']
             ],
             "mechanics" => (int)$mechanics['total'],
-            "customers" => (int)$customers['total']
+            "customers" => (int)$customers['total'],
+             "revenueToday" => (float)$revenue['total']
         ]
     ]);
 }
