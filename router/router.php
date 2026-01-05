@@ -41,6 +41,8 @@ include '../stripe_payment/stripe_payment.php';
 include '../fetchreparations/fetchreparations.php';
 include '../fetchmechanics/fetchmechanics.php';
 include '../getinfo/getallusers.php';
+include '../dashboardinfo/managerdashboard.php';
+
 
 // Read POST data
 $request = json_decode(file_get_contents('php://input'), true);
@@ -146,6 +148,10 @@ switch ($function) {
     case 'fetchmechanics':
         fetchMechanics($connection);
         break;
+    case 'fetchmanagerdashboard':
+    fetchManagerDashboardStats($connection);
+    break;
+
 
 
 
