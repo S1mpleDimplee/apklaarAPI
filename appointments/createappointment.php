@@ -5,6 +5,7 @@ function createAppointment($data, $conn)
     $userid = $data['userid'];
     $mechanicid = $data['mechanicid'];
     $carid = $data['carid'];
+    $carname = $data['carname'] ?? 'Onbekende auto';
     $appointmentDate = $data['appointmentDate'];
     $appointmentTime = $data['appointmentTime'];
     $repairs = json_encode($data['repairs']);
@@ -16,7 +17,7 @@ function createAppointment($data, $conn)
             VALUES ('$userid', '$mechanicid', '$carid', '$appointmentDate', '$appointmentTime', '$repairs', '$totalNetPrice', '$totalGrossPrice', '$totalLaborTime')";
 
 
-    if ($userid && $mechanicid && $carid && $appointmentDate && $appointmentTime && $repairs && $totalNetPrice && $totalGrossPrice && $totalLaborTime) {
+    if ($userid && $carid && $appointmentDate && $appointmentTime && $repairs && $totalNetPrice && $totalGrossPrice && $totalLaborTime) {
     } else {
         echo json_encode([
             "success" => false,
@@ -35,8 +36,8 @@ function createAppointment($data, $conn)
         // AddNotification([
         //     "userid" => $userid,
         //     "preset" => "appointmentcreated",
-        //     "appointmentId" => $aid
-
+        //     "appointmentcar" => $carname,
+        //     "appointmenttime" => $appointmentDate . " " . $appointmentTime
         // ], $conn);
     } else {
         echo json_encode([

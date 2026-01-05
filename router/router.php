@@ -25,6 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 include '../appointments/createappointment.php';
 include '../appointments/getappointmentdata.php';
 include '../appointments/getAllAppointments.php';
+include '../appointments/cancelappointment.php';
+
 include '../appointments/getMechanicAppointments.php';
 include '../appointments/getAppointmentsForWeek.php';
 include '../register/register.php';
@@ -151,6 +153,7 @@ switch ($function) {
     case 'fetchmanagerdashboard':
     fetchManagerDashboardStats($connection);
     break;
+
 
 
 
