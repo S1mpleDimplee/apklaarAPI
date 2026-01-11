@@ -33,7 +33,6 @@ include '../appointments/getMechanicAppointments.php';
 include '../appointments/getAppointmentsForWeek.php';
 include '../getinfo/getalldentists.php';
 include '../getinfo/getallpatients.php';
-include '../getinfo/getallusers.php';
 include '../getinfo/getcurrentdentist.php';
 include '../register/register.php';
 include '../userdata/getAllUserData.php';
@@ -147,6 +146,7 @@ switch ($function) {
     case 'stripe_payment':
         handleStripePayment($data, $connection);
         break;
+
     case 'fetchreparations':
         fetchReparations($data, $connection);
         break;
@@ -174,6 +174,14 @@ switch ($function) {
         break;
     case 'checkverificationcode':
         CheckIfCodeIsValid($data, $connection);
+        break;
+
+
+    case 'createappointment':
+        CreateAppointment($data, $connection);
+        break;
+    case 'cancelappointment':
+        Cancelappointment($data, $connection);
         break;
 
     default:
